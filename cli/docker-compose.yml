@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  aozora-collector:
+    build: ./aozora-collector
+    depends_on:
+      - db
+  aozora-search:
+    build: ./aozora-search
+    depends_on:
+      - db
+  db:
+    image: mysql:8.0
+    env_file:
+      - .env
+    ports:
+      - "3306:3306"

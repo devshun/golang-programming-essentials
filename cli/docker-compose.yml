@@ -3,10 +3,14 @@ version: "3.8"
 services:
   aozora-collector:
     build: ./aozora-collector
+    volumes:
+      - ./aozora-collector:/app
     depends_on:
       - db
   aozora-search:
     build: ./aozora-search
+    volumes:
+      - ./aozora-search:/app
     depends_on:
       - db
   db:

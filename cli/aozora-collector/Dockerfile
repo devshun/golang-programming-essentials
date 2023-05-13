@@ -4,6 +4,7 @@ WORKDIR /app
 
 COPY . .
 
+RUN go mod tidy
 RUN go mod download
 
 CMD ["go", "run", "main.go"]

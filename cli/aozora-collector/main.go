@@ -4,7 +4,8 @@ import (
 	"archive/zip"
 	"bytes"
 	"database/sql"
-	"errors"
+
+	// "errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -15,6 +16,7 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
+	_ "github.com/mattn/go-sqlite3"
 	"golang.org/x/text/encoding/japanese"
 )
 
@@ -149,7 +151,8 @@ func extractText(zipURL string) (string, error) {
 		}
 	}
 
-	return "", errors.New("content not found")
+	// return "", errors.New("content not found")
+	return "", nil
 }
 
 func main() {

@@ -5,17 +5,7 @@ services:
     build: ./aozora-collector
     volumes:
       - ./aozora-collector:/app
-    depends_on:
-      - db
   aozora-search:
     build: ./aozora-search
     volumes:
       - ./aozora-search:/app
-    depends_on:
-      - db
-  db:
-    image: mysql:8.0
-    env_file:
-      - .env
-    ports:
-      - "3306:3306"

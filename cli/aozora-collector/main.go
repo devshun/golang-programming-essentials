@@ -3,6 +3,7 @@ package main
 import (
 	"archive/zip"
 	"bytes"
+	"database/sql"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -19,52 +20,52 @@ import (
 
 type Entry struct {
 	AuthorID string
-	Author string
-	TitleID string
-	Title string
-	InfoURL string
-	SiteURL string
-	ZipURL string
+	Author   string
+	TitleID  string
+	Title    string
+	InfoURL  string
+	SiteURL  string
+	ZipURL   string
 }
 
 func findEntries(siteURL string) ([]Entry, error) {
-  doc, err := goquery.NewDocument(siteURL)
+	doc, err := goquery.NewDocument(siteURL)
 
-  if err != nil {
-	return nil, err
-  } 
-
-  pat := regexp.MustCompile(`.*/cards/([0-9]+)/card([0-9]+).html$`)
-
-  entries := []Entry{}
-
-  doc.Find("ol li a").Each(func(n int, elem *goquery.Selection) {
-
-	token := pat.FindStringSubmatch(elem.AttrOr("href", ""))
-
-	if len(token) != 3 {
-		return
+	if err != nil {
+		return nil, err
 	}
 
-  title := elem.Text()
+	pat := regexp.MustCompile(`.*/cards/([0-9]+)/card([0-9]+).html$`)
 
-  pageURL := fmt.Sprintf("https://www.aozora.gr.jp/cards/%s/card%s.html", token[1], token[2])
+	entries := []Entry{}
 
-  author, zipURL := findAuthorAndZip(pageURL)
+	doc.Find("ol li a").Each(func(n int, elem *goquery.Selection) {
 
-  if zipURL != "" {
-	entries = append(entries, Entry{
-		AuthorID: token[1],
-		Author: author,
-		TitleID: token[2],
-		Title: title,
-		SiteURL: siteURL,
-		ZipURL: zipURL,
+		token := pat.FindStringSubmatch(elem.AttrOr("href", ""))
+
+		if len(token) != 3 {
+			return
+		}
+
+		title := elem.Text()
+
+		pageURL := fmt.Sprintf("https://www.aozora.gr.jp/cards/%s/card%s.html", token[1], token[2])
+
+		author, zipURL := findAuthorAndZip(pageURL)
+
+		if zipURL != "" {
+			entries = append(entries, Entry{
+				AuthorID: token[1],
+				Author:   author,
+				TitleID:  token[2],
+				Title:    title,
+				SiteURL:  siteURL,
+				ZipURL:   zipURL,
+			})
+		}
 	})
-  }
-  })
 
-return entries, nil
+	return entries, nil
 }
 
 func findAuthorAndZip(siteURL string) (string, string) {
@@ -94,7 +95,7 @@ func findAuthorAndZip(siteURL string) (string, string) {
 	}
 
 	u, err := url.Parse(siteURL)
-	
+
 	if err != nil {
 		return author, ""
 	}
@@ -104,8 +105,7 @@ func findAuthorAndZip(siteURL string) (string, string) {
 	return author, u.String()
 }
 
-
-func extractText (zipURL string) (string, error) {
+func extractText(zipURL string) (string, error) {
 	resp, err := http.Get(zipURL)
 
 	if err != nil {
@@ -152,25 +152,48 @@ func extractText (zipURL string) (string, error) {
 	return "", errors.New("content not found")
 }
 
-
 func main() {
-  listURL := "https://www.aozora.gr.jp/index_pages/person879.html"
+	listURL := "https://www.aozora.gr.jp/index_pages/person879.html"
 
-  entries, err := findEntries(listURL)
-
-  if err != nil {
-	log.Fatal(err)
-  }
-
-  for _, entry := range entries {
-	content, err := extractText(entry.ZipURL)
+	entries, err := findEntries(listURL)
 
 	if err != nil {
 		log.Fatal(err)
-		continue
 	}
 
-	fmt.Println(entry.SiteURL)
-	fmt.Println(content)
-  }
+	for _, entry := range entries {
+		content, err := extractText(entry.ZipURL)
+
+		if err != nil {
+			log.Fatal(err)
+			continue
+		}
+
+		fmt.Println(entry.SiteURL)
+		fmt.Println(content)
+
+	}
+
+	// Database
+	
+	db, err := sql.Open("sqlite3", "database.sqlite")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer db.Close()
+
+	queies := []string{
+		"CREATE TABLE IF NOT EXISTS authors(author_id TEXT, author TEXT, PRIMARY KEY(author_id))",
+		"CREATE TABLE IF NOT EXISTS contents(author_id TEXT, title_id TEXT, title TEXT, content TEXT, PRIMARY KEY(author_id, title_id))",
+	}
+
+	for _, query := range queies {
+		_, err := db.Exec(query)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
 }

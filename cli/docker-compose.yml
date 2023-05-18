@@ -9,3 +9,7 @@ services:
     build: ./aozora-search
     volumes:
       - ./aozora-search:/app
+  temp:
+    build: ./temp
+    volumes:
+      - ./temp:/app

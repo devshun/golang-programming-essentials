@@ -1,7 +1,0 @@
-{
-  "name": "Go",
-  "image": "golang:1.20",
-  "features": {
-    "ghcr.io/devcontainers/features/go:1": {}
-  }
-}

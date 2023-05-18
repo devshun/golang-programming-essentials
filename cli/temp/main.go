@@ -10,6 +10,7 @@ import (
 	"github.com/ikawaha/kagome-dict/ipa"
 	"github.com/ikawaha/kagome/v2/tokenizer"
 	_ "github.com/mattn/go-sqlite3"
+	"golang.org/x/text/encoding/japanese"
 )
 
 func main() {
@@ -68,7 +69,7 @@ func main() {
 
 	seg := t.Wakati(content)
 
-	_, err = db.Exec(`INSERT INTO contents_fts(docid, words) VALUES(?, ?)`, docID, strings.Join(" ", seg))
+	_, err = db.Exec(`INSERT INTO contents_fts(docid, words) VALUES(?, ?)`, docID, strings.Join(seg, " "))
 
 	if err != nil {
 		log.Fatal(err)

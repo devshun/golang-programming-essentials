@@ -1,4 +1,5 @@
 .env
 
-# db stores
 .DS_Store
+
+*.sqlite

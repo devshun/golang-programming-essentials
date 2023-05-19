@@ -33,7 +33,7 @@
 		  // "go.coverOnSave": true,
 		  "go.useLanguageServer": true
 		  },
-		  "extensions": ["github.copilot"]
+		  "extensions": ["github.copilot", "github.copilot-labs"]
 		}
 	  }
 	

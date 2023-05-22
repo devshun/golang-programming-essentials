@@ -3,10 +3,8 @@
 {
   "name": "GO",
   "build": {
-    "dockerfile": "../Dockerfile"
-  },
-  "features": {
-    "ghcr.io/devcontainers/features/go:1": {}
+    "dockerfile": "./Dockerfile", 
+    "context": "../"
   },
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [],
@@ -24,9 +22,9 @@
         // "go.testOnSave": true,
         // "go.vetOnSave": "package",
         // "go.coverOnSave": true,
-        "go.useLanguageServer": true
+        // "go.useLanguageServer": true
       },
-      "extensions": []
+      "extensions": ["golang.Go"]
     }
   }
 

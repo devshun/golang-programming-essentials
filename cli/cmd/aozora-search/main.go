@@ -10,6 +10,8 @@ import (
 
 	"github.com/ikawaha/kagome-dict/ipa"
 	"github.com/ikawaha/kagome/v2/tokenizer"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func showAuthors(db *sql.DB) error {
@@ -114,10 +116,6 @@ func main() {
 	var dsn string
 
 	flag.StringVar(&dsn, "d", "database.sqlite", "database")
-
-	flag.Usage = func() {
-		fmt.Println("usage")
-	}
 
 	flag.Parse()
 

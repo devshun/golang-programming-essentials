@@ -3,4 +3,4 @@ all:
 aozora-collector:
 	go run cmd/aozora-collector/main.go
 aozora-search:
-	go run cmd/aozora-search/main.go
+	go run cmd/aozora-search/main.go ${ARGS}

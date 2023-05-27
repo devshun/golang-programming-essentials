@@ -1,4 +1,4 @@
-module github.com/devshun/golang-programming-essentials/webapp/todoapp
+module github.com/devshun/golang-programming-essentials/todoapp
 
 go 1.20
 

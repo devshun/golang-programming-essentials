@@ -17,12 +17,6 @@
     "vscode": {
       "settings": {
         "go.formatTool": "gofmt",
-        // "go.lintTool": "staticcheck",
-        // "go.lintOnSave": "package",
-        // "go.testOnSave": true,
-        // "go.vetOnSave": "package",
-        // "go.coverOnSave": true,
-        // "go.useLanguageServer": true
       },
       "extensions": ["golang.Go"]
     }

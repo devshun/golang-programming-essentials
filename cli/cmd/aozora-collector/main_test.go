@@ -1,20 +1,15 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
 	"regexp"
 	"testing"
-
-	_ "github.com/mattn/go-sqlite3"
 )
 
 func TestFindEntries(t *testing.T) {
-
-	// mockを定義
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(r.URL.String())
 		if r.URL.String() == "/" {
@@ -91,140 +86,17 @@ func TestFindEntries(t *testing.T) {
 	}
 }
 
-func TestFindAuthorAndZIP(t *testing.T) {
-	type args struct {
-		siteURL string
-	}
-	tests := []struct {
-		name  string
-		args  args
-		want  string
-		want1 string
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, got1 := findAuthorAndZIP(tt.args.siteURL)
-			if got != tt.want {
-				t.Errorf("findAuthorAndZIP() got = %v, want %v", got, tt.want)
-			}
-			if got1 != tt.want1 {
-				t.Errorf("findAuthorAndZIP() got1 = %v, want %v", got1, tt.want1)
-			}
-		})
-	}
-}
+func TestExtractText(t *testing.T) {
+	ts := httptest.NewServer(http.FileServer(http.Dir(".")))
+	defer ts.Close()
 
-func TestFindEntries(t *testing.T) {
-	type args struct {
-		siteURL string
+	got, err := extractText(ts.URL + "/testdata/example.zip")
+	if err != nil {
+		t.Fatal(err)
+		return
 	}
-	tests := []struct {
-		name    string
-		args    args
-		want    []Entry
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := findEntries(tt.args.siteURL)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("findEntries() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("findEntries() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_extractText(t *testing.T) {
-	type args struct {
-		zipURL string
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    string
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := extractText(tt.args.zipURL)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("extractText() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if got != tt.want {
-				t.Errorf("extractText() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_setupDB(t *testing.T) {
-	type args struct {
-		dsn string
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    *sql.DB
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := setupDB(tt.args.dsn)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("setupDB() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("setupDB() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_addEntry(t *testing.T) {
-	type args struct {
-		db      *sql.DB
-		entry   *Entry
-		content string
-	}
-	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := addEntry(tt.args.db, tt.args.entry, tt.args.content); (err != nil) != tt.wantErr {
-				t.Errorf("addEntry() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
-}
-
-func Test_main(t *testing.T) {
-	tests := []struct {
-		name string
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			main()
-		})
+	want := "テストデータ\n"
+	if want != got {
+		t.Errorf("want %+v, but got %+v", want, got)
 	}
 }

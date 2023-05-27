@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-# Install required Go tools
+# Install Go tools
 RUN go install github.com/cweill/gotests/gotests@latest
 RUN go install github.com/fatih/gomodifytags@latest
 RUN go install github.com/josharian/impl@latest
